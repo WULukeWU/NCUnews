@@ -1,11 +1,11 @@
 <div align="center">
-  <img src="https://lihi-io.s3.us-west-004.backblazeb2.com/dXNlcl8xNDA4MDc=/1720582168519.png" alt="ncuma Logo" width="300">
+  <img src="https://lihi-io.s3.us-west-004.backblazeb2.com/dXNlcl8xNDA4MDc=/1720582168519.png" alt="NCUnews Logo" width="300">
 </div>
 
-<h1 align="center">ncuma</h1>
+<h1 align="center">NCUnews</h1>
 
 <p align="center">
-  <strong>截取自<a href="https://w2.math.ncu.edu.tw/">國立中央大學數學系</a>官網，將最新消息傳送至 LINE Notify。</strong>
+  <strong>截取自<a href="https://www.ncu.edu.tw/tw/events/index.php">國立中央大學</a>官網，將最新消息傳送至 LINE Notify。</strong>
 </p>
 
 ---
@@ -34,13 +34,13 @@ Actions → I understand my workflows, go ahead and enable them → Enable workf
    > ```
 
 
-#### [新增Google Sheets模版](https://lihi.cc/y0vet)
+#### [新增Google Sheets模版](https://lihi.cc/aIRGz)
 2. <code>GOOGLE_SHEETS_KEY</code>：在`https://docs.google.com/spreadsheets/d/`後的一串金鑰<br><br>
    Steps: <br>
    建立副本 → 複製Google Sheets Key<br><br>
    > Example:
    > ```
-   > 1qg59GfsNuiWMCaqrd3pvDVyBl6o3ZC25VA9my01i0WE
+   > 1BgRD69ftHav68dU55IpnrUS-Fd2so7cCMi1rlNeiQSg
    > ```
 
 
