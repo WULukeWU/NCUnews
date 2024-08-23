@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://lihi-io.s3.us-west-004.backblazeb2.com/dXNlcl8xNDA4MDc=/1720582168519.png" alt="NCUnews Logo" width="300">
+  <img src="2024 NCUnews_transparent https://lihi-io.s3.us-west-004.backblazeb2.com/dXNlcl8xNDA4MDc=/1724410433881.png" alt="NCUnews Logo" width="300">
 </div>
 
 <h1 align="center">NCUnews</h1>
