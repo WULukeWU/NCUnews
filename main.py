@@ -33,25 +33,14 @@ service = Service(ChromeDriverManager().install())
 # LINE Notify ID
 LINE_Notify_IDs = list(line_notify_id.split())
 
-# 定義查找nid代碼函數
-def find_nid(title, text):
-    title_line_numbers = []
-    for i, line in enumerate(text.split('\n')):
-        if title in line:
-            title_line_numbers.append(i)
-
-    if not title_line_numbers:
-        print(f'Cannot find "{title}" in the text.')
-        return None
-
-    title_line_number = title_line_numbers[0]
-    title_line = text.split('\n')[title_line_number]
-
-    nid_start_index = title_line.index('nid="') + 5
-    nid_end_index = title_line.index('"', nid_start_index)
-    nid = title_line[nid_start_index:nid_end_index]
-
-    return nid
+# 定義查找num代碼函數
+def find_num(link):
+    # 使用正則表達式匹配 "num=" 後面的數字
+    match = re.search(r'num=(\d+)', link)
+    if match:
+        return match.group(1)  # 返回匹配的數字部分
+    else:
+        return None  # 如果沒有找到匹配的部分，返回 None
 
 # 取得網頁內容
 def get_content(url):
@@ -163,7 +152,7 @@ def main(url):
         category = event.find('u', class_='tabconstr').get_text(strip=True)
         # 提取部門名稱
         department = event.find('u', class_='tabDept').get_text(strip=True)
-        
+
         # 將提取的數據存儲在一個字典中
         event_info = {
             'link': f'https://www.ncu.edu.tw/tw/events/{link}',
@@ -172,7 +161,7 @@ def main(url):
             'category': category,
             'department': department
         }
-        
+
         # 將字典添加到列表中
         event_data.append(event_info)
 
@@ -189,11 +178,13 @@ def main(url):
 
         event = event_data[i]
 
-        # link_publish = f"{url[:url.find('ischool')]}ischool/public/news_view/show.php?nid={nid}"
-        # link = f"{url[:url.find('ischool')]}ischool/public/news_view/show.php?nid={nid}"
+        num = find_num(event['link'])
+
+        link_publish = f"https://www.ncu.edu.tw/tw/events/show.php?num={num}&page="
+        link = f"https://lihi.cc/teaiS/{num}"
 
         # 打開公告詳細頁面
-        driver.get(event['link'])
+        driver.get(link_publish)
         driver.implicitly_wait(10)
 
         # 抓取詳細頁面的 HTML 並打印
@@ -218,7 +209,7 @@ def main(url):
             # print("Content not found.")
             event['content'] = '-'
 
-        print(f"title:{event['title']}\tcategory:{event['category']}\tdate:{event['date']}\tdepartment:{event['department']}\tlink:{event['link']}\tcontent:{event['content']}")
+        print(f"title:{event['title']}\tcategory:{event['category']}\tdate:{event['date']}\tdepartment:{event['department']}\tlink:{link}\tcontent:{event['content']}")
 
         # 獲取當前日期
         today = datetime.date.today()
@@ -226,9 +217,9 @@ def main(url):
         # 將日期格式化為2023/02/11的形式
         formatted_date = today.strftime("%Y/%m/%d")
 
-        # 檢查nid是否已經存在於表格中
-        sent = not(event['link'] in links)
-        # print(sent, event['link'], links)
+        # 檢查num是否已經存在於表格中
+        sent = not(num in nums)
+        # print(sent, num, nums)
 
         if sent:
 
@@ -239,7 +230,7 @@ def main(url):
 
           # 獲取新行
           now = datetime.datetime.now() + datetime.timedelta(hours=8)
-          new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), event['category'], event['date'], event['department'], event['title'], event['link'], event['content']]
+          new_row = [now.strftime("%Y-%m-%d %H:%M:%S"), event['category'], event['date'], event['department'], event['title'], num, link, event['content']]
 
           # 將新行添加到工作表中
           worksheet.append_row(new_row)
@@ -250,20 +241,20 @@ def main(url):
           # print(new_row_index)
 
           # 更新單元格
-          cell_list = worksheet.range('A{}:G{}'.format(new_row_index, new_row_index))
+          cell_list = worksheet.range('A{}:H{}'.format(new_row_index, new_row_index))
           for cell, value in zip(cell_list, new_row):
               cell.value = value
           worksheet.update_cells(cell_list)
 
-          # 更新links列表
-          links.append(event['link'])
+          # 更新nums列表
+          nums.append(num)
 
           # 傳送至LINE Notify
-          print(f"Sent: {event['link']}", end=' ')
-          LINE_Notify(event['category'], event['date'], event['department'], event['title'], event['link'], event['content'])
+          print(f"Sent: {link}", end=' ')
+          LINE_Notify(event['category'], event['date'], event['department'], event['title'], link, event['content'])
 
-        # 刪除nid
-        # del link
+        # 刪除num
+        del num
 
     # 關閉網頁
     driver.quit()
@@ -278,14 +269,17 @@ if __name__ == "__main__":
   # 刷新Google Sheets表格
   google_sheets_refresh()
 
-  # 取得Google Sheets nids列表
-  _links = df[5].tolist()
-  links = []
-  for l in _links:
+  # 取得Google Sheets nums列表
+  _nums = df[5].tolist()
+  nums = []
+  for n in _nums:
     try:
-      links.append(l)
+      nums.append(n)
     except:
       continue
+
+  # for url in urls:
+    # main(url)
 
   error_links = []
 
@@ -312,3 +306,4 @@ if __name__ == "__main__":
     print(f"--------------------------------------------------\nAll Finished, Here Are All The Links That Cannot Be Sent Successfully. ({len(error_links)} files)")
     for error_link in error_links:
       print(error_link)
+  
